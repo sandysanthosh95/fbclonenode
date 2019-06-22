@@ -10,7 +10,7 @@ exports.save = async (req, res) => {
         user.name = userData.name
         user.mobileNumber = userData.mobileNumber
         user.password = cryptr.encrypt(userData.password);
-        let savedUser = users.findOne({ mobileNumber: user.mobileNumber }).lean()
+        let savedUser = await users.findOne({ mobileNumber: user.mobileNumber }).lean()
         if (savedUser) {
             throw {
                 known: true, msg: "User already exists with this mobile number, Please Login"
@@ -32,17 +32,17 @@ exports.save = async (req, res) => {
             return
         }
     } catch (e) {
-        let msg = e.known ? e.message : "Unexpected error accessing data"
+        console.log(e)
+        let msg = e.known ? e.msg : "Unexpected error accessing data"
         return responseCtrl.SendInternalError(res, msg)
     }
 }
 
-exports.login = (req, res) => {
+exports.login = async (req, res) => {
     try {
         const loginData = req.body
-        let foundUser = users.findOne({ mobileNumber: loginData.mobileNumber }).lean()
-        if (foundUser) {
-            console.log(user)
+        let user = await users.findOne({ mobileNumber: loginData.mobileNumber }).lean()
+        if (user) {
             const decryptedPassword = cryptr.decrypt(user.password)
             if (decryptedPassword == loginData.password) {
                 responseCtrl.SendSuccess(res, user)
@@ -53,6 +53,7 @@ exports.login = (req, res) => {
             responseCtrl.SendNotFound(res, "User not found, please signup before login")
         }
     } catch (e) {
+        console.log(e)
         responseCtrl.SendInternalError(res, "Unexpected error accessing data")
         return
     }
