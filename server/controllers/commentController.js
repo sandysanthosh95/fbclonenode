@@ -1,10 +1,9 @@
-const commentSchema = require('../../model/comment')
-const responseCtrl = require('../../responseCtrl')
+const commentSchema = require('../model/comment')
+const responseCtrl = require('../responseCtrl')
 
 exports.save = async (req, res) => {
-    let body = req.body
-    console.log("saving comment", typeof body.username)
     try {
+        let body = req.body
         let commentSchm = new commentSchema()
         commentSchm.postId = body.postId
         commentSchm.userId = body.userId
@@ -15,6 +14,7 @@ exports.save = async (req, res) => {
         return
     } catch (e) {
         console.log(e)
+        responseCtrl.SendBadRequest(res,"unexpected error while accessing data")
         return
     }
 }

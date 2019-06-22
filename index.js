@@ -10,7 +10,7 @@ const socketConnections = require('./server/socketConnections')
 
 const URI = "mongodb://localhost/spritle"
 
-mongoose.connect(URI)
+mongoose.connect(URI,{useNewUrlParser: true,useCreateIndex:true})
 const connection = mongoose.connection
 
 connection.on("connecting", () => {

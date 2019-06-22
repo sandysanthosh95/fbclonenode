@@ -1,5 +1,5 @@
-const posts = require('../../model/posts')
-const responseCtrl = require('../../responseCtrl')
+const posts = require('../model/posts')
+const responseCtrl = require('../responseCtrl')
 const { ObjectId } = require('mongodb');
 
 let sucResponse = {
@@ -12,26 +12,11 @@ let failureResponse = {
 }
 
 //Api call
-exports.save = async (postData) => {
-    console.log("saving post", postData)
-    let post = new posts()
-    post.userId = postData._id
-    post.postDate = postData.date
-    post.post = postData.post
-    try {
-        let posted = await post.save()
-        sucResponse.data = posted
-        return sucResponse
-    } catch (err) {
-        failureResponse.error = "try again later"
-        return failureResponse
-    }
-}
 
 exports.get = async (req, res) => {
-    console.log("get usrId", req.params.id)
-    let id = req.params.id
     try {
+        console.log("get usrId", req.params.id)
+        let id = req.params.id
         var post = await posts.aggregate([
             {
                 $match:
@@ -105,10 +90,9 @@ exports.getpostbyid = async (req, res) => {
 }
 
 exports.likedbyuser = async (req, res) => {
-    console.log("liked by user")
-    let body = req.body
     try {
-        let post = await posts.updateOne({ _id: body.postId }, { $push: { likedBy: { likeduserId: body.userId, name: body.name } } })
+        let body = req.body
+        let post = await posts.updateOne({ _id: ObjectId(body.postId) }, { $push: { likedBy: { likeduserId: body.userId, name: body.name } } })
         responseCtrl.SendSuccess(res, post)
         return
     } catch (e) {
@@ -118,10 +102,10 @@ exports.likedbyuser = async (req, res) => {
 }
 
 exports.unlikebyuser = async (req, res) => {
-    let body = req.body
-    console.log("unlike user", body)
     try {
-        let post = await posts.updateOne({ _id: body.postId }, { $pull: { likedBy: { likeduserId: body.userId } } })
+        let body = req.body
+        console.log("unlike user", body)
+        let post = await posts.updateOne({ _id: ObjectId(body.postId) }, { $pull: { likedBy: { likeduserId: body.userId } } })
         responseCtrl.SendSuccess(res, post)
         return
     } catch (e) {
@@ -131,11 +115,23 @@ exports.unlikebyuser = async (req, res) => {
 }
 
 //Socket call
+exports.save = async (postData) => {
+    try {
+        let post = new posts()
+        post.userId = postData._id
+        post.postDate = postData.date
+        post.post = postData.post
+        let posted = await post.save()
+        sucResponse.data = posted
+        return sucResponse
+    } catch (err) {
+        failureResponse.error = "try again later"
+        return failureResponse
+    }
+}
 exports.getposts = async (userId) => {
     try {
-        console.log("getPostsById")
-        let post = await posts.find({ userId: { $ne: userId } }).sort({ _id: -1 }).populate({ path: 'userId' }).lean()
-        console.log(post)
+        let post = await posts.find({ userId: { $ne: ObjectId(userId) } }).sort({ _id: -1 }).populate({ path: 'userId' }).lean()
         sucResponse.data = post
         return sucResponse
     } catch (err) {

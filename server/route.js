@@ -1,6 +1,6 @@
-let userController = require('./controllers/server/userController')
-let postController = require('./controllers/server/postController')
-let commentController = require('./controllers/server/commentController')
+let userController = require('./controllers/userController')
+let postController = require('./controllers/postController')
+let commentController = require('./controllers/commentController')
 
 module.exports = (app) => {
     //users

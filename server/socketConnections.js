@@ -1,4 +1,4 @@
-const postController = require('./controllers/server/postController')
+const postController = require('./controllers/postController')
 
 module.exports = (server) => {
     const io = require("socket.io")(server);
@@ -7,7 +7,6 @@ module.exports = (server) => {
         services()
         function services() {
             socket.on("saveNewPost", async function (data) {
-                console.log("------------------------")
                 try {
                     let response = await postController.save(data);
                     socket.broadcast.emit("savedPost", response);
