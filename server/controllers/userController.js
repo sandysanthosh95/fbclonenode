@@ -5,6 +5,7 @@ const cryptr = new Cryptr('myTotalySecretKey');
 
 exports.save = async (req, res) => {
     try {
+        console.log("users", req.body)
         const userData = req.body
         let user = new users()
         user.name = userData.name
@@ -57,26 +58,6 @@ exports.login = async (req, res) => {
         responseCtrl.SendInternalError(res, "Unexpected error accessing data")
         return
     }
-
-    // .exec((err, user) => {
-    //     if (err) {
-    //         console.log(err)
-    //         responseCtrl.SendInternalError(res, "Unexpected error accessing data")
-    //         return
-    //     } else {
-    //         if (user) {
-    //             console.log(user)
-    //             const decryptedPassword = cryptr.decrypt(user.password)
-    //             if (decryptedPassword == loginData.password) {
-    //                 responseCtrl.SendSuccess(res, user)
-    //             } else {
-    //                 responseCtrl.SendNotFound(res, "Invalid Credentials")
-    //             }
-    //         } else {
-    //             responseCtrl.SendNotFound(res, "User not found, please signup before login")
-    //         }
-    //     }
-    // })
 }
 
 

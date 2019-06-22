@@ -4,6 +4,7 @@ module.exports = (server) => {
     const io = require("socket.io")(server);
     let nsp = io.of('/myroom');
     nsp.on("connection", function (socket) {
+        console.log("user connected with id", socket.id)
         services()
         function services() {
             socket.on("saveNewPost", async function (data) {
