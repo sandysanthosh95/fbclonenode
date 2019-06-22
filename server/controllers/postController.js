@@ -1,6 +1,6 @@
 const posts = require('../model/posts')
 const responseCtrl = require('../responseCtrl')
-const { ObjectId } = require('mongodb');
+const { ObjectId } = require('mongoose').Types.ObjectId
 
 let sucResponse = {
     statusCode: 200,
@@ -121,7 +121,8 @@ exports.save = async (postData) => {
         post.userId = postData._id
         post.postDate = postData.date
         post.post = postData.post
-        let posted = await post.save()
+        let savedPost = await post.save()
+        let posted = await posts.findOne({ _id: savedPost._id})
         sucResponse.data = posted
         return sucResponse
     } catch (err) {
